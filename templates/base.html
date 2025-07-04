@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}YouTube Comments Analytics{% endblock %}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #FFFFFF;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background-image: url('https://www.cars.co.za/images/cars-logo.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #FFFFFF;
+            border-radius: 20px;
+            padding: 100px 30px;
+            border: 1px solid #FF0000;
+        }
+
+        .header h1 {
+            color: #FF0000;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: #FF0000;
+            border-radius: 15px;
+            padding: 10px;
+        }
+
+        .nav-tab {
+            padding: 12px 25px;
+            margin: 0 5px;
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            background: #FFFFFF;
+            color: #FF0000;
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            background: #FF0000;
+            color: #FFFFFF;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error {
+            background: #FF0000;
+            color: #FFFFFF;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #CC0000;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+
+            .nav-tab {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fab fa-youtube"></i> {% block header_title %}YouTube Comments Analytics{% endblock %}</h1>
+            <p>{% block header_subtitle %}Comprehensive analysis of YouTube channel comments and engagement{% endblock %}</p>
+            <div class="refresh-time" id="lastRefresh"></div>
+        </div>
+
+        <div class="nav-tabs">
+            <a href="/" class="nav-tab {% if request.path == '/' %}active{% endif %}">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a href="/sentiment" class="nav-tab {% if request.path == '/sentiment' %}active{% endif %}">
+                <i class="fas fa-heart"></i> Sentiment Analysis
+            </a>
+            <a href="/videos" class="nav-tab {% if request.path == '/videos' %}active{% endif %}">
+                <i class="fas fa-video"></i> Videos
+            </a>
+        </div>
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script>
+        function updateRefreshTime() {
+            const now = new Date();
+            document.getElementById('lastRefresh').textContent = 
+                `Last updated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            document.querySelector('.container').insertBefore(errorDiv, document.querySelector('.container').firstChild);
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.parentNode.removeChild(errorDiv);
+                }
+            }, 5000);
+        }
+
+        document.addEventListener('DOMContentLoaded', updateRefreshTime);
+    </script>
+</body>
+</html>
